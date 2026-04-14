@@ -12,7 +12,7 @@ Projeto moderno para gestão e monitoramento de pets (Snow, Sky, Nox e Aura), in
 ## 🚀 Como Rodar
 
 1. Clone o repositório:
-   git clone [URL_DO_SEU_REPOSITORIO]
+   git clone git@github.com:murilofelipe/pet-care-android-app.git
 
 2. Abra no Android Studio Panda 3+.
 
