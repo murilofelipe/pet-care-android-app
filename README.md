@@ -1,75 +1,76 @@
-# 🐾 PetCare - Gestão Rural e Familiar
+# 🐾 PetCare — Gestão de pets para casas e apartamentos
 
-O **PetCare** é um aplicativo Android desenvolvido em Jetpack Compose para a gestão completa de animais em propriedades rurais. O projeto foi estruturado para atender desde animais domésticos até lotes de produção (gado, aves e piscicultura), com foco em rastreabilidade e genealogia.
+O **PetCare** é um aplicativo Android (Kotlin + Jetpack Compose) para tutores
+de pets, complementar ao **Sition Web** (SaaS de gestão rural). O app **não tem
+backend próprio**: consome a mesma API REST do Sition Web, reaproveitando a
+entidade `Animal` com vínculo direto ao usuário — sem propriedade rural.
 
-## 🚀 Funcionalidades
+## 🚀 Funcionalidades (Fase 1 — Core)
 
-- **Cadastro Híbrido:** Registro de animais individuais (matrizes/pets) ou lotes (aves/peixes).
-- **Genealogia e Pedigree:** Registro de pai e mãe para controle de consanguinidade.
-- **Categorização Estruturada:** Separação por finalidade (Doméstico, Produção, Subsistência ou Lazer).
-- **Identificação Visual:** Suporte para foto principal do animal ou lote.
-- **Cálculo de Idade:** Lógica baseada em data de nascimento para manejo sanitário.
-- **Arquitetura MVVM:** Código limpo, reativo e escalável.
+- **Autenticação**: login com e-mail/usuário + senha (JWT do Sition Web). O
+  cadastro de conta continua no Sition Web (exige código de ativação).
+- **Pets**: cadastro, edição, listagem e exclusão (nome, espécie, raça, sexo,
+  nascimento, peso, foto, observações).
+- **Vacinação**: tipo, data de aplicação, próxima dose, lote, local/vet
+  responsável, custo.
+- **Medicação**: nome, dosagem, frequência, início/fim do tratamento.
+- **Utensílios/Ração**: itens com categoria, marca, quantidade e data prevista
+  de reposição (alerta visual quando próxima).
+- **Financeiro**: gastos por categoria com total do mês e marcação de
+  recorrência.
+- **Acesso do veterinário**: o tutor concede acesso por e-mail
+  (`VetAnimalAccess`); o veterinário vê os pets compartilhados na aba
+  "Como vet" e registra vacinas/medicações.
+- **Cache offline**: Room espelha os dados da API; o último estado sincronizado
+  fica disponível sem rede.
 
-## 🛠️ Stack Tecnológica
+## 🛠️ Stack
 
-- **Linguagem:** Kotlin
-- **Interface:** Jetpack Compose (Material 3)
-- **Arquitetura:** MVVM + Repository Pattern
-- **Estado:** StateFlow & Coroutines
-- **Imagens:** Coil (Asynchronous Image Loading)
+Kotlin 2.3 · Jetpack Compose (Material 3) · MVVM (ViewModel + StateFlow) ·
+Hilt · Retrofit + OkHttp + kotlinx.serialization · Room · DataStore · Coil.
+Build: Gradle 9.4.1 + AGP 8.13.2 + KSP.
 
-## 📂 Estrutura de Pastas
+Documentação detalhada: [`docs/architecture/current.md`](docs/architecture/current.md) ·
+[`docs/adr/001-pet-sem-propriedade.md`](docs/adr/001-pet-sem-propriedade.md) ·
+[`docs/sition-web-changes.md`](docs/sition-web-changes.md) (mudanças no backend).
+
+## ⚙️ Como rodar
+
+1. **Backend** (repo `sition-web`): suba o docker-compose e o backend Spring —
+   a migration `V12__petcare_core.sql` cria as tabelas do PetCare.
+2. **App**: abra no Android Studio e rode no emulador, ou:
+
+   ```bash
+   ./gradlew installDebug
+   ```
+
+   O build **debug** aponta para `http://10.0.2.2:8080/` (backend local visto
+   do emulador); o **release** aponta para `https://sition.murilofelipe.com/`.
+   Ajuste em `app/build.gradle.kts` (`API_BASE_URL`) se necessário.
+3. Faça login com um usuário existente do Sition Web.
+
+## 📂 Estrutura
 
 ```text
-src/main/kotlin/com/murilo/petcare/
-├── model/          # Pet.kt e Enums de categoria
-├── repository/     # PetRepository.kt (Gestão de fluxo de dados)
-├── viewmodel/      # PetViewModel.kt (Lógica de estado da UI)
+app/src/main/kotlin/com/murilo/petcare/
+├── di/            # Hilt (Retrofit, OkHttp, Room)
+├── data/
+│   ├── auth/      # TokenStore (DataStore) + AuthInterceptor (JWT)
+│   ├── remote/    # PetCareApi + DTOs (contratos do Sition Web)
+│   ├── local/     # Room (cache offline)
+│   └── repository/
 ├── ui/
-│   ├── components/ # PetCard.kt (Componentes reutilizáveis)
-│   ├── screens/    # PetListScreen.kt e PetFormScreen.kt
-│   └── theme/      # Configurações de cores e estilos
-└── MainActivity.kt # Navegação e ponto de entrada
-```
-## 🚀 Como Rodar
-
-1.  Clone o repositório:
-```terminaloutput
-git clone git@github.com:murilofelipe/pet-care-android-app.git
-```   
-
-
-2. Abra no Android Studio Panda 3+.
-
-3. Instale no dispositivo:
-   ./gradlew installDebug
-
-
-## ⚙️ Configuração e Build
-Ajuste de Memória (Heap Space)
-Devido à complexidade dos componentes de UI e processamento de imagem, se o build falhar com erro de memória no Android Studio Panda 3, adicione ao seu gradle.properties:
-
-```properties
-org.gradle.jvmargs=-Xmx4096m
+│   ├── login/ · home/ · pets/ · supplies/ · expenses/ · vet/
+│   ├── navigation/ · session/ · common/ · theme/
+└── MainActivity.kt
 ```
 
+## 📍 Roadmap
 
-## 🏗 Estrutura
-- `app/`: Módulo principal do aplicativo.
-- `gradle/libs.versions.toml`: Fonte de verdade das versões.
+1. **Fase 2 — Conexões externas**: pet shops, adestramento, praças, comunidade.
+2. **Notificações/alarmes** (via Sition Web) para próximas doses e reposição.
+3. **Receita médica estruturada** sincronizada do Sition Web.
+4. Upload real de foto (câmera/galeria) e cadastro dentro do app.
 
-## Dependências Core
-```kotlin
-implementation("io.coil-kt:coil-compose:2.6.0")
-implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-```
-
-## 📍 Roadmap de Desenvolvimento
-
-1.  **Persistência Local (Room):** Migrar o repositório em memória para banco de dados local. 
-2.  **Histórico de Vacinação:** Módulo para controle de datas e lembretes sanitários. 
-3.  **Módulo de Piscicultura:** Gestão específica para tanques de tilápias e controle de ração. 
-4.  **Integração Kafka/Data Engineering:** Streaming de dados para telemetria de sensores IoT na chácara.
 ---
 Desenvolvido por Murilo Silva Felipe 🌿
