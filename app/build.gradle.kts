@@ -21,8 +21,10 @@ android {
 
     buildTypes {
         debug {
-            // Backend local do sition-web (docker-compose), visto do emulador Android
-            buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:8080/\"")
+            // Backend local do sition-web (docker-compose) via túnel do adb:
+            //   adb reverse tcp:8080 tcp:8080
+            // Funciona em aparelho físico (USB ou Wi-Fi) e também no emulador.
+            buildConfigField("String", "API_BASE_URL", "\"http://127.0.0.1:8080/\"")
         }
         release {
             buildConfigField("String", "API_BASE_URL", "\"https://sition.murilofelipe.com/\"")
