@@ -44,9 +44,18 @@ Documentação detalhada: [`docs/architecture/current.md`](docs/architecture/cur
    ./gradlew installDebug
    ```
 
-   O build **debug** aponta para `http://10.0.2.2:8080/` (backend local visto
-   do emulador); o **release** aponta para `https://sition.murilofelipe.com/`.
-   Ajuste em `app/build.gradle.kts` (`API_BASE_URL`) se necessário.
+   O build **debug** aponta para `http://127.0.0.1:8080/` através do túnel do
+   adb — antes de testar (emulador **ou** aparelho físico via USB/adb Wi-Fi),
+   rode:
+
+   ```bash
+   adb reverse tcp:8080 tcp:8080
+   ```
+
+   > O túnel se desfaz quando o aparelho desconecta do adb ou reinicia —
+   > basta rodar o comando de novo. O **release** aponta para
+   > `https://sition.murilofelipe.com/`. Ajuste em `app/build.gradle.kts`
+   > (`API_BASE_URL`) se necessário.
 3. Faça login com um usuário existente do Sition Web.
 
 ## 📂 Estrutura
