@@ -3,60 +3,55 @@ package com.murilo.petcare
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.murilo.petcare.model.Pet
-import com.murilo.petcare.ui.screens.PetFormScreen
-import com.murilo.petcare.ui.screens.PetListScreen
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.murilo.petcare.ui.login.LoginScreen
+import com.murilo.petcare.ui.navigation.PetCareNavHost
+import com.murilo.petcare.ui.session.SessionState
+import com.murilo.petcare.ui.session.SessionViewModel
 import com.murilo.petcare.ui.theme.PetCareTheme
-import com.murilo.petcare.viewmodel.PetViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PetCareTheme {
-                // Instância única do ViewModel compartilhada entre as telas
-                val petViewModel: PetViewModel = viewModel()
-
-                // Estados de navegação e controle de edição
-                var currentScreen by remember { mutableStateOf("list") }
-                var petToEdit by remember { mutableStateOf<Pet?>(null) }
-
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
-                    when (currentScreen) {
-                        "list" -> {
-                            PetListScreen(
-                                viewModel = petViewModel,
-                                onNavigateToForm = {
-                                    petToEdit = null // Garante que o formulário abra vazio para novo pet
-                                    currentScreen = "form"
-                                },
-                                onEditPet = { pet ->
-                                    petToEdit = pet // Define o pet que será carregado no formulário
-                                    currentScreen = "form"
-                                }
-                            )
-                        }
-                        "form" -> {
-                            PetFormScreen(
-                                viewModel = petViewModel,
-                                petToEdit = petToEdit,
-                                onNavigateBack = {
-                                    currentScreen = "list"
-                                }
-                            )
-                        }
-                    }
+                    PetCareApp()
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun PetCareApp(sessionViewModel: SessionViewModel = hiltViewModel()) {
+    val state by sessionViewModel.state.collectAsStateWithLifecycle()
+
+    when (val s = state) {
+        SessionState.Loading -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            CircularProgressIndicator()
+        }
+
+        SessionState.LoggedOut -> LoginScreen()
+
+        is SessionState.LoggedIn -> PetCareNavHost(
+            session = s.session,
+            onLogout = sessionViewModel::logout,
+        )
     }
 }
