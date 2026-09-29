@@ -34,8 +34,8 @@ utensílios/ração, financeiro, cache offline (Room). Próximos passos:
 
 ## Regras deste projeto
 
-- Branches a partir de `developer`; PR de volta para `developer`; Conventional
-  Commits em pt-BR. `main` só recebe merge da `developer`.
+- Branches a partir de `develop`; PR de volta para `develop`; Conventional
+  Commits em pt-BR. `main` só recebe merge da `develop`.
 - Contratos de API: nunca inventar — conferir nos controllers do sition-web
   (`backend/src/main/java/com/murilo/sition/controller/Pet*.java`). Mudança de
   contrato = PR nos dois repos.
