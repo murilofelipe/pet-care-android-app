@@ -1,3 +1,5 @@
+**Português** · [English](README.en.md)
+
 # 🐾 PetCare — Gestão de pets para casas e apartamentos
 
 O **PetCare** é um aplicativo Android (Kotlin + Jetpack Compose) para tutores
@@ -32,7 +34,8 @@ Build: Gradle 9.4.1 + AGP 8.13.2 + KSP.
 
 Documentação detalhada: [`docs/architecture/current.md`](docs/architecture/current.md) ·
 [`docs/adr/001-pet-sem-propriedade.md`](docs/adr/001-pet-sem-propriedade.md) ·
-[`docs/sition-web-changes.md`](docs/sition-web-changes.md) (mudanças no backend).
+[`docs/sition-web-changes.md`](docs/sition-web-changes.md) (mudanças no backend) ·
+[`docs/backlog.md`](docs/backlog.md) (backlog priorizado).
 
 ## ⚙️ Como rodar
 
@@ -80,6 +83,12 @@ app/src/main/kotlin/com/murilo/petcare/
 2. **Notificações/alarmes** (via Sition Web) para próximas doses e reposição.
 3. **Receita médica estruturada** sincronizada do Sition Web.
 4. Upload real de foto (câmera/galeria) e cadastro dentro do app.
+
+## 🌿 Fluxo de branches
+
+Branches a partir de `develop`; PR de volta para `develop`, com Conventional Commits em
+pt-BR. A `main` só recebe merge da `develop`. O CI (GitHub Actions) roda qualidade,
+cobertura e duplicação em cada PR.
 
 ---
 Desenvolvido por Murilo Silva Felipe 🌿

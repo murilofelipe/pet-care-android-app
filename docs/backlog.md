@@ -23,7 +23,7 @@ Room, docs + ADR. Validado em aparelho físico contra backend V12.
 ### Sprint B — Qualidade
 - [ ] Testes unitários: ViewModels (login, pets, gastos) e mapeamentos DTO↔entity
 - [ ] Teste instrumentado mínimo: fluxo login → lista de pets (MockWebServer)
-- [ ] CI GitHub Actions: `assembleDebug` + lint em PR para `developer`
+- [ ] CI GitHub Actions: `assembleDebug` + lint em PR para `develop`
 - [ ] Tratamento de sessão expirada (401 → logout automático + volta ao login)
 
 ### Sprint C — Saúde e histórico
